@@ -58,6 +58,7 @@ router.get('/:id', asyncHandler(async (req, res, next) => {
 /* POST create a new course */
 router.post('/', authenticateUser, asyncHandler(async (req, res, next) => {
   const course = req.body;
+  course.userId = req.currentUser.id;
 
   try {
     // Check to see if a course is already owned by a specific user
@@ -79,7 +80,7 @@ router.post('/', authenticateUser, asyncHandler(async (req, res, next) => {
     // Else, if the user has not yet owned the course, create that course
     else {
       const newCourse = await Course.create(course);
-      res.location('/').status(201).end();
+      res.location(`/${newCourse.id}`).status(201).end();
     }
     
   } catch (error) {
