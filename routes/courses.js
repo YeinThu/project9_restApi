@@ -80,7 +80,9 @@ router.post('/', authenticateUser, asyncHandler(async (req, res, next) => {
     // Else, if the user has not yet owned the course, create that course
     else {
       const newCourse = await Course.create(course);
-      res.location(`/${newCourse.id}`).status(201).end();
+      res.location(`/api/courses/${newCourse.id}`);
+      console.log(res.get('location'));
+      res.status(201).end();
     }
     
   } catch (error) {
