@@ -58,16 +58,18 @@ router.get('/:id', asyncHandler(async (req, res, next) => {
 /* POST create a new course */
 router.post('/', authenticateUser, asyncHandler(async (req, res, next) => {
   const course = req.body;
-  course.userId = req.currentUser.id;
-
+  let existingCourseByUser;
+  
   try {
-    // Check to see if a course is already owned by a specific user
-    const existingCourseByUser = await Course.findOne({
-      where: {
-        userId: course.userId,
-        title: course.title
-      }
-    });
+    if (course.title) {
+      // Check to see if a course is already owned by a specific user
+      existingCourseByUser = await Course.findOne({
+        where: {
+          userId: course.userId,
+          title: course.title
+        }
+      });
+    }
 
     // If that user already owns the course...
     if (existingCourseByUser) {
@@ -82,8 +84,9 @@ router.post('/', authenticateUser, asyncHandler(async (req, res, next) => {
       const newCourse = await Course.create(course);
       res.location(`/api/courses/${newCourse.id}`).status(201).end();
     }
-    
-  } catch (error) {
+   
+  } 
+  catch (error) {
     console.log(error.name)
 
     if (error.name === 'SequelizeValidationError') {
