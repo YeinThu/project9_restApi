@@ -58,37 +58,52 @@ router.get('/:id', asyncHandler(async (req, res, next) => {
 /* POST create a new course */
 router.post('/', authenticateUser, asyncHandler(async (req, res, next) => {
   const course = req.body;
-  let existingCourseByUser;
+  // let existingCourseByUser;
   
-  try {
-    if (course.title) {
-      // Check to see if a course is already owned by a specific user
-      existingCourseByUser = await Course.findOne({
-        where: {
-          userId: course.userId,
-          title: course.title
-        }
-      });
-    }
+  // try {
+  //   if (course.title) {
+  //     // Check to see if a course is already owned by a specific user
+  //     existingCourseByUser = await Course.findOne({
+  //       where: {
+  //         userId: course.userId,
+  //         title: course.title
+  //       }
+  //     });
+  //   }
 
-    // If that user already owns the course...
-    if (existingCourseByUser) {
-      const user = await User.findByPk(existingCourseByUser.userId);
+  //   // If that user already owns the course...
+  //   if (existingCourseByUser) {
+  //     const user = await User.findByPk(existingCourseByUser.userId);
 
-      res.status(400).json({ 
-        message: `This course is already owned by ${user.firstName} ${user.lastName}.` 
-      });
-    }
-    // Else, if the user has not yet owned the course, create that course
-    else {
-      const newCourse = await Course.create(course);
-      res.location(`/api/courses/${newCourse.id}`).status(201).end();
-    }
+  //     res.status(400).json({ 
+  //       message: `This course is already owned by ${user.firstName} ${user.lastName}.` 
+  //     });
+  //   }
+  //   // Else, if the user has not yet owned the course, create that course
+  //   else {
+  //     const newCourse = await Course.create(course);
+  //     res.location(`/api/courses/${newCourse.id}`).status(201).end();
+  //   }
    
+  // } 
+  // catch (error) {
+  //   console.log(error.name)
+
+  //   if (error.name === 'SequelizeValidationError') {
+  //     const errors = error.errors.map(err => err.message);
+  //     res.status(400).json(errors);
+  //   }
+  //   else {
+  //     // All other errors forwarded to the global error handler
+  //     next(error);
+  //   }
+  // }
+
+  try {
+    const newCourse = await Course.create(course);
+    res.location(`/api/courses/${newCourse.id}`).status(201).end();
   } 
   catch (error) {
-    console.log(error.name)
-
     if (error.name === 'SequelizeValidationError') {
       const errors = error.errors.map(err => err.message);
       res.status(400).json(errors);
